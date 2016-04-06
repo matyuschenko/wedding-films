@@ -48,7 +48,7 @@ with open('res.txt', 'w') as f:
     h = '\t'.join(['id', 'name', 'year', 'country', 'genres', 'rating',
                    'voters', 'time', 'director', 'actors'
     ])
-    f.write(h)
+    f.write(h + '\n')
     for i in ids:
         r = parse_kp(i)
         l = '\t'.join([
