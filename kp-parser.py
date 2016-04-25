@@ -3,6 +3,7 @@ import re
 import requests
 import pprint
 from bs4 import BeautifulSoup
+import urllib.request
 
 with open('ids.txt', 'r') as f:
     ids = [x.strip() for x in f.readlines()]
@@ -30,6 +31,12 @@ def parse_kp(movie_id):
     m_voters = soup(
         'span', class_='ratingCount'
     )[0].get_text().replace(u'\xa0', '')
+    m_description = soup(
+        'div', class_='brand_words'
+    )[0].get_text().replace(u'\xa0', ' ').replace(u'\x85', '...')
+
+    pic_url = 'http://st.kp.yandex.net/images/film_iphone/iphone360_' + movie_id + '.jpg'
+    urllib.request.urlretrieve(pic_url, "images/" + movie_id + ".jpg")
 
     return {
         'id': movie_id,
@@ -41,12 +48,13 @@ def parse_kp(movie_id):
         'genres': ';'.join(m_genres),
         'time': m_time,
         'rating': m_rating,
-        'voters': m_voters
+        'voters': m_voters,
+        'description': m_description
     }
 
 with open('res.txt', 'w') as f:
     h = '\t'.join(['id', 'name', 'year', 'country', 'genres', 'rating',
-                   'voters', 'time', 'director', 'actors'
+                   'voters', 'time', 'description', 'director', 'actors'
     ])
     f.write(h + '\n')
     for i in ids:
@@ -60,6 +68,7 @@ with open('res.txt', 'w') as f:
             r['rating'],
             r['voters'],
             r['time'],
+            r['description'],
             r['director'],
             r['actors']
         ])
